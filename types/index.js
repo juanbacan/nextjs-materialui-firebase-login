@@ -1,17 +1,3 @@
-export const EXISTE_PREGUNTA = 'EXISTE_PREGUNTA';
-export const EXISTEN_PREGUNTAS = 'EXISTEN_PREGUNTAS';
-export const BORRAR_ESTADO = 'BORRAR_ESTADO';
-export const CAMBIAR_NUMERO = 'CAMBIAR_NUMERO';
-export const GUARDAR_SIMULACION = 'GUARDAR_SIMULACION';
-export const CONFIGURAR_PREGUNTAS = 'CONFIGURAR_PREGUNTAS';
+export const PUNTOS = 'PUNTOS';
 
-export const MOSTRAR_FOOTER = 'MOSTRAR_FOOTER';
-
-export const USUARIO = 'USUARIO';
-export const ADMIN = "ADMIN";
-export const PREMIUM = "PREMIUM";
-export const READY = "READY";
-export const CERRAR_SESION = "CERRAR_SESION"
-
-export const ASIGNAR_TEXTO = "EDITAR_COMENTARIO"
 

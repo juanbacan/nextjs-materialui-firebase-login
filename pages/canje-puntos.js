@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { Container, Grid, Button } from '@mui/material';
 import TextField from '@mui/material/TextField';
 
@@ -7,6 +7,8 @@ import updateDataFirebase from '../functions/updateDataFirebase';
 import DialogComponent from '../components/DialogComponent';
 import DialogWarningComponent from '../components/DialogWarningComponent';
 
+import { FirebaseContext } from '../firebase/';
+
 const warning1Title = "Código promocional Inválido";
 const warning1Description = "El código promocional que ha ingresado no existe";
 const warning2Title = "Código promocional ya Canjeado";
@@ -14,8 +16,11 @@ const warning2Description = "El código promocional ya ha sido canjeado";
 
 const CanjePuntos = () => {
 
+    // Variable Global de Puntos
+    const { puntos, actualizarPuntos } = useContext(FirebaseContext);
+    // ***********************************************************
+
     const [codigo, setCodigo] = useState("");
-    const [puntos, setPuntos] = useState(20);
 
     // Para los modales
     const [open, setOpen] = useState(false);
@@ -64,7 +69,7 @@ const CanjePuntos = () => {
         
         updateDataFirebase("codigos-promocionales", documento.id, {estado: false});
 
-        setPuntos(puntos + documento.puntosInt);
+        actualizarPuntos(puntos + documento.puntosInt);
 
         setCodigo("");
         setOpen(false);

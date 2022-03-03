@@ -12,6 +12,8 @@ import Alert from '@mui/material/Alert';
 import addDataFirebase from '../functions/addDataFirebase';
 import uploadFileFirebase from '../functions/uploadFileFirebase';
 
+import SnackBarComponent from '../components/SnackBarComponent';
+
 
 const Input = styled('input')({
     display: 'none',
@@ -72,13 +74,51 @@ const CreacionPremios = () => {
 
     const guardarPremio = async () => {
         console.log(nombre, descripcion, puntos, stock);
+
+
+        if(nombre === "" || descripcion === "" || puntos === 0 || stock === 0){
+            // Abre el SnackBar en la parte inferior de la pantalla
+            setMessage("Debe llenar todos los campos del Premio");
+            setSeverety("warning");
+            setOpen(true);
+            setTimeout(function(){
+                setOpen(false);
+            }, 3000);
+            return;
+        }
+
         const puntosInt = parseInt(puntos); 
         const stockInt = parseInt(stock); 
 
         const nuevoPremio = { nombre, descripcion, puntosInt, stockInt, image };
         const estadoGuardado = await addDataFirebase("premios", nuevoPremio);
-        console.log(estadoGuardado);
+
+
+
+        // Abre el SnackBar en la parte inferior de la pantalla
+        setMessage("Producto creado con éxito");
+        setSeverety("success");
+        setOpen(true);
+
+        // Resetea todo al inicio
+
+        setNombre("");
+        setDescripcion("");
+        setPuntos(0);
+        setStock(0);
+        setImage("/no-disponible.png");
+
+        setTimeout(function(){
+            setOpen(false);
+        }, 3000);
     }
+
+
+    // Para abrir las alertas
+    const [message, setMessage] = useState("");
+    const [severety, setSeverety] = useState("success");
+    const [open, setOpen] = useState(false);
+    // *************************************************
 
     return (
         <Container maxWidth="sm" sx={{my: 5}}>
@@ -157,8 +197,12 @@ const CreacionPremios = () => {
                     Guardar Nuevo Premio
                 </Button>
             </Grid>
+
+            <SnackBarComponent open={open} message={message} severety={severety}/>
+                
         </Container>
     );
 }
  
 export default CreacionPremios;
+

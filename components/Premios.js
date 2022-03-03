@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Grid, Box } from '@mui/material';
 import MediaCard from '../components/MediaCard';
 
@@ -7,6 +7,7 @@ import DialogWarningComponent from '../components/DialogWarningComponent';
 
 import updateDataFirebase from '../functions/updateDataFirebase';
 
+import { FirebaseContext } from '../firebase';
 
 const tituloNoPuntos = "No puedes canjear el premio";
 const descriptionNoPuntos = "No tienes los puntos necesarios para canjear el premio, primero dirígete a canjear tus cupones para reunir puntos";
@@ -15,7 +16,11 @@ const tituloNoStock = "No puedes canjear el premio";
 const descriptionNoStock = "El premio se ha agotado, prueba a elegir otro premio";
 
 
-const Premios = ({data, setPuntos, puntos}) => {
+const Premios = ({data}) => {
+
+    // Variable Global de Puntos
+    const { puntos, actualizarPuntos } = useContext(FirebaseContext);
+    // ***********************************************************
 
     const [titulo, setTitulo] = useState("");
     const [mensaje, setMensaje] = useState("");
@@ -54,12 +59,22 @@ const Premios = ({data, setPuntos, puntos}) => {
 
     const canjearPremio = () => {
       
-      setPuntos(puntos - premioUpdate.puntosInt)
+      actualizarPuntos(puntos - premioUpdate.puntosInt)
       updateDataFirebase("premios", premioUpdate.id, {"stockInt": premioUpdate.stockInt - 1});
 
-      
-      // premio.stockInt = premio.stockInt - 1;
+      console.log(data);
+      console.log(premioUpdate.id)
 
+      const newStock = premioUpdate.stockInt - 1;
+
+      // Actualiza el número de stock de cada producto
+      data.filter((elemento) => {
+        if(elemento.id === premioUpdate.id){
+          elemento.stockInt = newStock;
+        }
+
+        return elemento.id === premioUpdate.id;
+      });
       setOpen(false);
     }
 
@@ -68,7 +83,7 @@ const Premios = ({data, setPuntos, puntos}) => {
         <Grid container justifyContent="center">
           {
             data.map((premio, index) => (
-              <Box sx={{my: 4, mx: 2, width: "300px", height: "500px"}} key={index}>
+              <Box sx={{my: 4, mx: 2, width: "300px"}} key={index}>
                 <MediaCard 
                   name = {premio.nombre}
                   image = {premio.image}
