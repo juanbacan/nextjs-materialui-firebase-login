@@ -8,6 +8,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import addDataFirebase from '../functions/addDataFirebase';
 
+import SnackBarComponent from '../components/SnackBarComponent';
+
 
 const CreacionCodigosPromocionales = () => {
 
@@ -16,6 +18,7 @@ const CreacionCodigosPromocionales = () => {
     const [puntos, setPuntos] = useState(0);
     const [estado, setEstado] = useState(true);
 
+    const [open, setOpen] = useState(false);
     
     useEffect(() => {
         console.log("Creando codigo aleatorio");
@@ -44,6 +47,10 @@ const CreacionCodigosPromocionales = () => {
         const estadoGuardado = await addDataFirebase("codigos-promocionales", nuevoCodigo);
         setCodigo(uuidv4());
         setPuntos("");
+        setOpen(true);
+        setTimeout(function(){
+            setOpen(false);
+        }, 3000);
         //Router.push("/");
     }
 
@@ -83,6 +90,12 @@ const CreacionCodigosPromocionales = () => {
                     Grabar Código Promocional
                 </Button>
             </Grid>
+
+            <SnackBarComponent 
+                open={open}
+                message={"Código Promocional creado con éxito"}
+                severety={"success"}
+            />
         </Container>
         
     );
