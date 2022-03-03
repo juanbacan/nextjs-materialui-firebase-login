@@ -1,49 +1,66 @@
-import React from 'react';
-import { useFormik } from 'formik';
-
+import React, { useState, useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
+import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 
-import validationSchema from '../utils/validationSchema';
+import readDataFirebase from '../functions/readDataFirebase';
+import StackRectangularSkeleton from '../components/StackRectangularSkeleton';
+import MediaCard from '../components/MediaCard';
 
+const Home = () => {
 
-const Login = () => {
+  const [data, setData] = useState([]);
+  const [ready, setReady] = useState(false);
 
-  const formik = useFormik({
-    initialValues: {
-      email: 'foobar@example.com',
-      password: 'foobar',
-    },
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-    },
-  });
+  useEffect(() => {
+    const readData = async() => {
+      const dataDB = await readDataFirebase("animales");
+      setData(dataDB);
+      setReady(true);
+    }
+    readData();
+  }, []);
+  
 
   return (
-    <Container component="main" maxWidth="xs">
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Index
-          </Typography>
-      </Box>
+    <Container component="main" maxWidth="lg">
+      {
+        !ready 
+          ? <StackRectangularSkeleton />
+          : <>
+            {
+              data.length > 0 
+              ? <Animals
+                  data={data}
+                />
+              : <Typography component="h4">
+                  Aún no se ha agregado productos
+                </Typography>
+            } 
+            </>   
+      }
     </Container>
   );
 };
  
-export default Login;
+export default Home;
+
+const Animals = ({data}) => {
+  return (
+    <Grid container justifyContent="center">
+      {
+        data.map((animal, index) => (
+          <Box sx={{my: 4, mx: 2}} key={index}>
+            <MediaCard 
+              name = {animal.name}
+              image = {animal.image}
+              description = {animal.description}
+            />
+          </Box>
+        ))
+      }
+    </Grid>
+  );
+}
+ 
