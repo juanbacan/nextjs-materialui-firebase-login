@@ -55,10 +55,11 @@ const Premios = ({data, setPuntos, puntos}) => {
     const canjearPremio = () => {
       
       setPuntos(puntos - premioUpdate.puntosInt)
-
       updateDataFirebase("premios", premioUpdate.id, {"stockInt": premioUpdate.stockInt - 1});
+
+      
       // premio.stockInt = premio.stockInt - 1;
-      // setPuntos(puntos - puntosInt);
+
       setOpen(false);
     }
 
