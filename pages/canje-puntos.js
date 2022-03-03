@@ -5,24 +5,29 @@ import TextField from '@mui/material/TextField';
 import readDocumentFirebase from '../functions/readDocumentFirebase';
 import updateDataFirebase from '../functions/updateDataFirebase';
 import DialogComponent from '../components/DialogComponent';
+import DialogWarningComponent from '../components/DialogWarningComponent';
 
-
+const warning1Title = "Código promocional Inválido";
+const warning1Description = "El código promocional que ha ingresado no existe";
+const warning2Title = "Código promocional ya Canjeado";
+const warning2Description = "El código promocional ya ha sido canjeado";
 
 const CanjePuntos = () => {
 
     const [codigo, setCodigo] = useState("");
     const [puntos, setPuntos] = useState(20);
 
+    // Para los modales
     const [open, setOpen] = useState(false);
+    const [openWarning, setOpenWarning] = useState(false);
+
+
+    const [titleWarning, setTitleWarning] = useState("");
+    const [descriptionWarning, setDescriptionWarning] = useState("");
+
+    // *************************************************
 
     const refDocumento = useRef(null);
-
-    // useEffect(() => {
-    //     const leerPuntosUsuario = async () => {
-    //         const puntos = await readDocumentFirebase("puntos", "codigo", codigo);
-    //     }
-    //     leerPuntosUsuario();
-    // }, []);
     
     const cambiarCodigo = (e) => {
         setCodigo(e.target.value);
@@ -31,13 +36,27 @@ const CanjePuntos = () => {
     const canjearCodigoPromocional = async () => {
 
         const documento = await readDocumentFirebase("codigos-promocionales", "codigo", codigo);
-        refDocumento.current = documento;
+        
 
-        // TODO Comprobar si el codigo es valido o no
+        if (documento.length <= 0) {
+            // No existe el código
+            console.log("No existe el código");
+            setTitleWarning(warning1Title);
+            setDescriptionWarning(warning1Description);
+            setOpenWarning(true);
 
-        // TODO Comprobar si el codigo esta en estado falso
+        } else if(documento[0].estado === false){
+            // El código ya ha sido canjeado
+            console.log("El código ya ha sido canjeado")
+            setTitleWarning(warning2Title);
+            setDescriptionWarning(warning2Description);
+            setOpenWarning(true);
 
-        setOpen(true);
+        } else{
+            // Se puede canjear el código
+            refDocumento.current = documento;
+            setOpen(true);
+        }
     }
 
     const confirmarCanjeo = async () => {
@@ -53,7 +72,7 @@ const CanjePuntos = () => {
 
     return (
         <>
-            <Container maxWidth="sm">
+            <Container maxWidth="sm" sx={{mt: 5}}>
                 <Grid container justify-content="center" direction="column">
                     <p>Puntos</p>
                     <p>{puntos}</p>
@@ -82,6 +101,13 @@ const CanjePuntos = () => {
                 description={"Una vez canjeado el código promocional, no podrá volver a utilizar este código"}
                 handleFunction = {confirmarCanjeo}
             />
+
+            <DialogWarningComponent 
+                setOpen={setOpenWarning}
+                open={openWarning}
+                title={titleWarning}
+                description={descriptionWarning}
+            />  
         </>
     );
 }

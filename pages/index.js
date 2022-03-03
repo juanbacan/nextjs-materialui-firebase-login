@@ -1,66 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
+import { Container, Grid, Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
+import StackRectangularSkeleton from '../components/StackRectangularSkeleton';
+
+import Premios from '../components/Premios';
 
 import readDataFirebase from '../functions/readDataFirebase';
-import StackRectangularSkeleton from '../components/StackRectangularSkeleton';
-import MediaCard from '../components/MediaCard';
 
-const Home = () => {
 
-  const [data, setData] = useState([]);
-  const [ready, setReady] = useState(false);
+const CanjePremios = () => {
 
-  useEffect(() => {
-    const readData = async() => {
-      const dataDB = await readDataFirebase("animales");
-      setData(dataDB);
-      setReady(true);
-    }
-    readData();
-  }, []);
+    const [puntos, setPuntos] = useState(500);
+
+    const [data, setData] = useState([]);
+    const [ready, setReady] = useState(false);
   
-
-  return (
-    <Container component="main" maxWidth="lg">
-      {
-        !ready 
-          ? <StackRectangularSkeleton />
-          : <>
-            {
-              data.length > 0 
-              ? <Animals
-                  data={data}
-                />
-              : <Typography component="h4">
-                  Aún no se ha agregado productos
-                </Typography>
-            } 
-            </>   
+    useEffect(() => {
+      const readData = async() => {
+        const dataDB = await readDataFirebase("premios");
+        setData(dataDB);
+        setReady(true);
       }
-    </Container>
-  );
-};
- 
-export default Home;
+      readData();
+    }, []);
 
-const Animals = ({data}) => {
-  return (
-    <Grid container justifyContent="center">
-      {
-        data.map((animal, index) => (
-          <Box sx={{my: 4, mx: 2}} key={index}>
-            <MediaCard 
-              name = {animal.name}
-              image = {animal.image}
-              description = {animal.description}
-            />
-          </Box>
-        ))
-      }
-    </Grid>
-  );
+    return (
+        <>
+            <Container maxWidth="lg">
+                {
+                    !ready 
+                    ? <StackRectangularSkeleton />
+                    : <>
+                        {
+                        data.length > 0 
+                        ?   
+                            <>
+                                <p>Puntos: {puntos}</p>
+                                <Premios
+                                    setPuntos={setPuntos}
+                                    puntos={puntos} 
+                                    data={data}
+                                />
+                            </>
+                            
+                        :   <Typography component="h4">
+                                Aún no se ha agregado premios
+                            </Typography>
+                        } 
+                        </>   
+                }
+            </Container>
+        </>
+    );
 }
  
+export default CanjePremios;
+

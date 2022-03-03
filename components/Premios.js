@@ -31,7 +31,6 @@ const Premios = ({data, setPuntos, puntos}) => {
 
 
     const comprobarCanjePremio = (premio) => {
-        console.log(premio);
 
         const {puntosInt, stockInt} = premio;
 
@@ -53,11 +52,13 @@ const Premios = ({data, setPuntos, puntos}) => {
         }
     }
 
-    const canjearPremio = (premio) => {
-      const {puntosInt, stockInt} = premio;
-      updateDataFirebase("premios", premio.id, {"stockInt": stockInt - 1});
-      premio.stockInt = premio.stockInt - 1;
-      setPuntos(puntos - puntosInt);
+    const canjearPremio = () => {
+      
+      setPuntos(puntos - premioUpdate.puntosInt)
+
+      updateDataFirebase("premios", premioUpdate.id, {"stockInt": premioUpdate.stockInt - 1});
+      // premio.stockInt = premio.stockInt - 1;
+      // setPuntos(puntos - puntosInt);
       setOpen(false);
     }
 
@@ -75,19 +76,18 @@ const Premios = ({data, setPuntos, puntos}) => {
                   stock = {premio.stockInt}
                   onClickButton = {() => comprobarCanjePremio(premio)}
                 />
-
-                <DialogComponent 
-                  setOpen={setOpen}
-                  open={open}
-                  title={"¿Estas seguro de cambiar tus puntos por este premio?"}
-                  description={"Una vez realizado el canje, se te restará la cantidad de puntos que valen el premio"}
-                  handleFunction={() => canjearPremio(premio)}
-                />
               </Box>
             ))
           }
         </Grid>
         
+        <DialogComponent 
+          setOpen={setOpen}
+          open={open}
+          title={"¿Estas seguro de cambiar tus puntos por este premio?"}
+          description={"Una vez realizado el canje, se te restará la cantidad de puntos que valen el premio"}
+          handleFunction={() => canjearPremio()}
+        />
         <DialogWarningComponent 
           setOpen={setOpenWarning}
           open={openWarning}

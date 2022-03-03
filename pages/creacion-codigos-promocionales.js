@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import Router from 'next/router'
 
 import TextField from '@mui/material/TextField';
 import { Container, Grid, Button } from '@mui/material';
@@ -23,7 +24,7 @@ const CreacionCodigosPromocionales = () => {
     
 
     const cambiarCodigo = (e) => {
-        setCodigo(e.target.value);
+        //setCodigo(e.target.value);
     }
 
     const cambiarPuntos = (e) => {
@@ -41,7 +42,9 @@ const CreacionCodigosPromocionales = () => {
 
         const nuevoCodigo = { codigo, puntosInt, estado };
         const estadoGuardado = await addDataFirebase("codigos-promocionales", nuevoCodigo);
-        console.log(estadoGuardado);
+        setCodigo(uuidv4());
+        setPuntos("");
+        //Router.push("/");
     }
 
     return (
